@@ -1,0 +1,5 @@
+﻿CREATE TABLE [dbo].[Lessons]
+(
+	[Id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+	[lesson] VARCHAR(50) NOT NULL
+)
