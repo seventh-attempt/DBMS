@@ -169,16 +169,6 @@ INSERT INTO aviacompany.routes (start_point, end_point, race_day, race_time) VAL
 
 -- PROCEDURES --
 
-CREATE PROCEDURE aviacompany.create_route(dep_point VARCHAR, day_1 VARCHAR, time_1 TIME, destination VARCHAR, day_2 VARCHAR, time_2 TIME) AS $$
-DECLARE
-	first_airport INTEGER := (SELECT airports.id FROM aviacompany.airports WHERE airports.location = dep_point);
-	second_airport INTEGER := (SELECT airports.id FROM aviacompany.airports WHERE airports.location = destination);
-BEGIN
-	INSERT INTO aviacompany.routes(start_point, end_point, race_day, race_time) VALUES (first_airport, second_airport, day_1, time_1);
-	INSERT INTO aviacompany.routes(start_point, end_point, race_day, race_time) VALUES (second_airport, first_airport, day_2, time_2);
-END;
-$$ LANGUAGE plpgsql;
-
 CREATE PROCEDURE aviacompany.add_plane(airport_location VARCHAR, plane_model VARCHAR, planes_amount INTEGER) AS $$
 DECLARE
 	airport_id INTEGER := (SELECT airports.id FROM aviacompany.airports WHERE airports.location = airport_location);
@@ -197,11 +187,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE PROCEDURE aviacompany.create_route(dep_point VARCHAR, day_1 VARCHAR, time_1 TIME, destination VARCHAR, day_2 VARCHAR, time_2 TIME) AS $$
+DECLARE
+	first_airport INTEGER := (SELECT airports.id FROM aviacompany.airports WHERE airports.location = dep_point);
+	second_airport INTEGER := (SELECT airports.id FROM aviacompany.airports WHERE airports.location = destination);
+BEGIN
+	INSERT INTO aviacompany.routes(start_point, end_point, race_day, race_time) VALUES (first_airport, second_airport, day_1, time_1);
+	INSERT INTO aviacompany.routes(start_point, end_point, race_day, race_time) VALUES (second_airport, first_airport, day_2, time_2);
+END;
+$$ LANGUAGE plpgsql;
+
 
 -- VIEWS --
 
 CREATE VIEW aviacompany.check_routes AS 
-	SELECT aviacompany.id AS id, first_airport.location AS departure_point, last_airport.location AS destination FROM aviacompany.routes AS route
+	SELECT route.id AS id, first_airport.location AS departure_point, last_airport.location AS destination FROM aviacompany.routes AS route
 	JOIN aviacompany.airports AS first_airport ON first_airport.id = route.start_point
 	JOIN aviacompany.airports AS last_airport ON last_airport.id = route.end_point;
 
