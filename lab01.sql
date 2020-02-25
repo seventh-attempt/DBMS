@@ -201,7 +201,8 @@ $$ LANGUAGE plpgsql;
 -- VIEWS --
 
 CREATE VIEW aviacompany.check_routes AS 
-	SELECT route.id AS id, first_airport.location AS departure_point, last_airport.location AS destination FROM aviacompany.routes AS route
+	SELECT route.id AS id, first_airport.location AS departure_point, last_airport.location AS destination,
+		route.race_day, route.race_time, route.is_active FROM aviacompany.routes AS route
 	JOIN aviacompany.airports AS first_airport ON first_airport.id = route.start_point
 	JOIN aviacompany.airports AS last_airport ON last_airport.id = route.end_point;
 
